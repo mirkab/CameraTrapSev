@@ -1,0 +1,27 @@
+import Metashape
+
+chunk = Metashape.app.document.chunk #active chunk
+scale = chunk.transform.scale
+camera = chunk.cameras[0] #first camera in the chunk
+depth = chunk.model.renderDepth(camera.transform, camera.sensor.calibration) #unscaled depth
+depth_scaled = Metashape.Image(depth.width, depth.height, " ", "F32")
+depth_grey = Metashape.Image(depth.width, depth.height, "RGB", "U8")
+v_min = 10E10
+v_max = -10E10
+
+for y in range(depth.height):
+    for x in range(depth.width):
+        depth_scaled[x,y] = (depth[x,y][0] * scale, )
+        v_max = max(v_max, depth_scaled[x,y][0])
+        if depth_scaled[x,y][0]:
+            v_min = min(v_min, depth_scaled[x,y][0])
+
+
+crange = v_max - v_min
+for y in range(depth.height):
+    for x in range(depth.width):
+        color = int((v_max - depth_scaled[x,y][0]) / crange * 255)
+        depth_grey[x,y] = (color, color, color)
+depth_scaled.save(r"")
+depth_grey.save(r"")
+
