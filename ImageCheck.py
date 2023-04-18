@@ -1,7 +1,7 @@
 import csv
 from PIL import Image
 
-image_path = "path"
+image_path = "Path"
 image = Image.open(image_path)
 image = Image.open(image_path)
 pixel_values = list(image.getdata())
